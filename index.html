@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script async src="https://cloud.umami.is/script.js" data-website-id="2df4d824-e968-4bff-8743-394608a488ea"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -505,7 +506,6 @@ video:-ms-fullscreen{
   text-shadow:0 0 10px rgba(255,255,255,.35);
 }
 
-/* ===== 欢迎弹窗（白色透明液态玻璃） ===== */
 .welcome-modal{
   position:fixed;
   inset:0;
@@ -853,6 +853,14 @@ video:-ms-fullscreen{
   const DEFAULT_PROXY = 'https://lxtx9.3328561244.workers.dev/?target={url}';
   const SITE_URL = 'https://lxtx9.github.io/Lxtx9';
 
+  function track(eventName) {
+    try {
+      if (window.umami && typeof window.umami.track === 'function') {
+        window.umami.track('海角-' + eventName);
+      }
+    } catch (e) {}
+  }
+
   const $ = s => document.querySelector(s);
   const logEl = $('#log');
 
@@ -1169,6 +1177,8 @@ video:-ms-fullscreen{
     $('#playerCard').classList.remove('show');
     logEl.innerHTML = '';
 
+    track('解析请求');
+
     try {
       const userProxy = $('#proxyInput').value;
       const origin = $('#originInput').value || 'https://haijiao.com';
@@ -1179,11 +1189,13 @@ video:-ms-fullscreen{
       $('#playerCard').classList.add('show');
       status('解析成功，正在播放…', 'ok');
       showToast('解析成功');
+      track('解析成功');
       play(m3u8);
     } catch (e) {
       status('解析失败：' + e.message, 'err');
       log('解析失败：' + e.message, 'err');
       showToast('解析失败');
+      track('解析失败');
       if (/Failed to fetch|NetworkError|Load failed|CORS|代理/i.test(e.message)) {
         log('提示：可能是跨域被拦截，请检查代理是否正常。', 'warn');
       }
@@ -1212,6 +1224,7 @@ video:-ms-fullscreen{
     $('#urlInput').value = '';
     status('已重置，等待新的地址', '');
     showToast('已重置');
+    track('重置');
   });
 
   $('#clearBtn').addEventListener('click', () => {
@@ -1219,9 +1232,18 @@ video:-ms-fullscreen{
     showToast('日志已清空');
   });
 
-  $('#tgChannel').addEventListener('click', () => window.open('https://t.me/Lxtx5', '_blank', 'noopener'));
-  $('#tgGroup').addEventListener('click', () => window.open('https://t.me/Lxtx78', '_blank', 'noopener'));
-  $('#githubLink').addEventListener('click', () => window.open('https://github.com/Lxtx9', '_blank', 'noopener'));
+  $('#tgChannel').addEventListener('click', () => {
+    track('点击-TG频道');
+    window.open('https://t.me/Lxtx5', '_blank', 'noopener');
+  });
+  $('#tgGroup').addEventListener('click', () => {
+    track('点击-TG交流群');
+    window.open('https://t.me/Lxtx78', '_blank', 'noopener');
+  });
+  $('#githubLink').addEventListener('click', () => {
+    track('点击-GitHub');
+    window.open('https://github.com/Lxtx9', '_blank', 'noopener');
+  });
 
   const viewHelper = $('#viewHelper');
   const viewSite = $('#viewSite');
@@ -1233,6 +1255,7 @@ video:-ms-fullscreen{
 
   function switchView(target) {
     if (target === 'site') {
+      track('切换到-官网');
       if (!siteLoaded) {
         siteFrame.src = SITE_URL;
         siteLoaded = true;
@@ -1249,6 +1272,7 @@ video:-ms-fullscreen{
       navSite.classList.add('active');
       window.scrollTo({ top: 0, behavior: 'auto' });
     } else {
+      track('切换到-海角助手');
       viewSite.classList.remove('active');
       viewHelper.classList.remove('hidden');
       document.body.classList.remove('site-active');
@@ -1272,6 +1296,7 @@ video:-ms-fullscreen{
     welcomeClose.textContent = left + ' 秒后可关闭';
     welcomeModal.classList.add('show');
     document.body.classList.add('welcome-lock');
+    track('打开-欢迎赞赏弹窗');
     if (welcomeTimer) clearInterval(welcomeTimer);
     welcomeTimer = setInterval(() => {
       left--;
@@ -1290,6 +1315,7 @@ video:-ms-fullscreen{
     if (welcomeClose.disabled) return;
     welcomeModal.classList.remove('show');
     document.body.classList.remove('welcome-lock');
+    track('关闭-欢迎赞赏弹窗');
     if (welcomeTimer) { clearInterval(welcomeTimer); welcomeTimer = null; }
   }
 
