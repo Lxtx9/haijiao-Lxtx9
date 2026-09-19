@@ -852,11 +852,12 @@ video:-ms-fullscreen{
 
   const DEFAULT_PROXY = 'https://lxtx9.3328561244.workers.dev/?target={url}';
   const SITE_URL = 'https://lxtx9.github.io/Lxtx9';
+  const APP_VERSION = '网页版';
 
   function track(eventName) {
     try {
       if (window.umami && typeof window.umami.track === 'function') {
-        window.umami.track('海角-' + eventName);
+        window.umami.track(`海角-${APP_VERSION}-${eventName}`);
       }
     } catch (e) {}
   }
@@ -1333,6 +1334,8 @@ video:-ms-fullscreen{
   } else {
     openWelcome();
   }
+
+  track('打开');
 
   log('解析器已就绪', 'ok');
   if (!window.Hls) log('hls.js 未加载成功，播放能力受限', 'warn');
